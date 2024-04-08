@@ -1,4 +1,5 @@
 .todo-list-item {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 1.25rem;
 }
   
@@ -16,6 +17,7 @@
   
 .todo-list-item.done .todo-list-item-label {
     text-decoration: line-through;
+    color: gray !important;
 }
   
 .todo-list-item.important .todo-list-item-label {
