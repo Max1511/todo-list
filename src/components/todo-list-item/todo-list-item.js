@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {formatDistanceToNow} from 'date-fns';
 
 import './todo-list-item.css';
 
@@ -11,7 +12,7 @@ export default class TodoListItem extends Component {
     }
 
     render() {
-        const {label, onDeleted,
+        const {label, date, onDeleted,
             onToggleImportant, onToggleDone,
             important, done} = this.props;
 
@@ -42,6 +43,8 @@ export default class TodoListItem extends Component {
                       onClick={onDeleted}>
                 <i className="fa fa-trash-o" />
               </button>
+
+              <p className="date float-right">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</p>
             </span>
         );
     }

@@ -24,3 +24,9 @@
     font-weight: bold;
     color: steelblue;
 }
+
+.todo-list-item .date {
+    margin: 3px;
+    font-size: 60%;
+    color: gray;
+}

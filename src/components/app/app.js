@@ -4,9 +4,10 @@ import AppHeader from "../app-header";
 import SearchPanel from "../search-panel";
 import ItemStatusFilter from "../item-status-filter"
 import ToDoList from "../todo-list";
+import ItemAddForm from "../item-add-form";
+import ItemController from "../item-controller";
 
 import "./app.css";
-import ItemAddForm from "../item-add-form";
 
 export default class App extends Component {
 
@@ -14,10 +15,11 @@ export default class App extends Component {
 
   createTodoItem = (label) => {
     return {
+      id: this.maxId++,
       label,
+      date: new Date(),
       important: false,
       done: false,
-      id: this.maxId++,
     }
   }
 
@@ -53,6 +55,16 @@ export default class App extends Component {
         ...todoData.slice(0, index),
         ...todoData.slice(index + 1),
       ];
+
+      return {
+        todoData: newArray,
+      }
+    });
+  }
+
+  deleteByFilter = (filteringProperty, filteringTarget) => {
+    this.setState(({todoData}) => {
+      const newArray = todoData.filter((element) => element[filteringProperty] !== filteringTarget);
 
       return {
         todoData: newArray,
@@ -121,6 +133,7 @@ export default class App extends Component {
           onToggleDone={this.onToggleDone}/>
         
         <ItemAddForm onItemAdded={this.addItem}/>
+        <ItemController deleteByFilter={this.deleteByFilter}/>
       </div>
     );
   }
