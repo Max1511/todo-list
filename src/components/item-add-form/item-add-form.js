@@ -1,26 +1,26 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 
-import "./item-add-form.css";
+import './item-add-form.css';
 
 export default class ItemAddForm extends Component {
 
     state = {
-        label: "",
-    }
+        label: '',
+    };
 
     onLabelChange = (event) => {
         this.setState({
             label: event.target.value,
         });
-    }
+    };
 
     onSubmit = (event) => {
         event.preventDefault();
         this.props.onItemAdded(this.state.label);
         this.setState({
-            label: "",
+            label: '',
         });
-    }
+    };
 
     render() {
         return (
@@ -37,6 +37,6 @@ export default class ItemAddForm extends Component {
                     Add Item
                 </button>
             </form>
-        )
+        );
     }
 }

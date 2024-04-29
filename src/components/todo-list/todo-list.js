@@ -5,30 +5,30 @@ import './todo-list.css';
 
 const TodoList = ({ todos, filteringProperty, filteringTarget, onDeleted, onToggleImportant, onToggleDone }) => {
 
-  const elements = todos.map((item) => {
-    const { id, ...itemProps } = item;
+    const elements = todos.map((item) => {
+        const { id, ...itemProps } = item;
 
-    if (typeof filteringProperty !== "undefined" &&
+        if (typeof filteringProperty !== 'undefined' &&
       itemProps[filteringProperty] !== filteringTarget) {
-      return;
-    }
+            return;
+        }
+
+        return (
+            <li key={id} className="list-group-item">
+                <TodoListItem
+                    {...itemProps }
+                    onDeleted = {() => onDeleted(id)}
+                    onToggleImportant = {() => onToggleImportant(id)}
+                    onToggleDone = {() => onToggleDone(id)}/>
+            </li>
+        );
+    });
 
     return (
-      <li key={id} className="list-group-item">
-        <TodoListItem
-          {...itemProps }
-          onDeleted = {() => onDeleted(id)}
-          onToggleImportant = {() => onToggleImportant(id)}
-          onToggleDone = {() => onToggleDone(id)}/>
-      </li>
+        <ul className="list-group todo-list">
+            { elements }
+        </ul>
     );
-  });
-
-  return (
-    <ul className="list-group todo-list">
-      { elements }
-    </ul>
-  );
 };
 
 export default TodoList;
