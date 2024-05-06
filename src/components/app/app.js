@@ -29,6 +29,7 @@ export default class App extends Component {
             this.createTodoItem('Make React App'),
             this.createTodoItem('Have a lunch'),
         ],
+        searchString: '',
         filteringProperty: undefined,
         filteringTarget: false
     };
@@ -109,6 +110,14 @@ export default class App extends Component {
         });
     };
 
+    onSetSearchString = (searchString) => {
+        this.setState(() => {
+            return {
+                searchString
+            };
+        });
+    };
+
     render() {
         const {todoData} = this.state;
         const doneCount = todoData.filter((item) => item.done).length;
@@ -118,7 +127,7 @@ export default class App extends Component {
             <div className="todo-app">
                 <AppHeader toDo={todoCount} done={doneCount} />
                 <div className="top-panel d-flex">
-                    <SearchPanel />
+                    <SearchPanel onSetSearchString={this.onSetSearchString}/>
                     <ItemStatusFilter
                         onSetFilter={this.onSetFilter}
                         onDisplayAll={this.displayAll}/>
@@ -126,6 +135,7 @@ export default class App extends Component {
         
                 <ToDoList
                     todos={this.state.todoData}
+                    searchString={this.state.searchString}
                     filteringProperty={this.state.filteringProperty}
                     filteringTarget={this.state.filteringTarget}
                     onDeleted={this.deleteItem}
