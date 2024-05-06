@@ -1,3 +1,3 @@
 ToDo List Application
 ------
-Ссылки на now.sh нет, так как у меня всё ещё нет доступа к нему
+[Посмотреть результат через Vercel](https://todo-list-phi-gray.vercel.app/)
