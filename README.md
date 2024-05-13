@@ -1,3 +1,3 @@
 ToDo List Application
 ------
-https://max1511.github.io/todo-list/
+[Посмотреть результат через Vercel](https://todo-list-phi-gray.vercel.app/)
