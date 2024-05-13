@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 
 import AppHeader from '../app-header';
-import SearchPanel from '../search-panel';
-import ItemStatusFilter from '../item-status-filter';
 import ToDoList from '../todo-list';
-import ItemAddForm from '../item-add-form';
 import ItemController from '../item-controller';
 
 import './app.css';
@@ -18,7 +15,6 @@ export default class App extends Component {
             id: this.maxId++,
             label,
             date: new Date(),
-            important: false,
             done: false,
         };
     };
@@ -29,7 +25,6 @@ export default class App extends Component {
             this.createTodoItem('Make React App'),
             this.createTodoItem('Have a lunch'),
         ],
-        searchString: '',
         filteringProperty: undefined,
         filteringTarget: false
     };
@@ -85,14 +80,6 @@ export default class App extends Component {
         ];
     };
 
-    onToggleImportant = (id) => {
-        this.setState(({todoData}) => {
-            return {
-                todoData: this.toggleProperty(todoData, id, 'important'),
-            };
-        });
-    };
-
     onToggleDone = (id) => {
         this.setState(({todoData}) => {
             return {
@@ -124,27 +111,22 @@ export default class App extends Component {
         const todoCount = todoData.length - doneCount;
 
         return (
-            <div className="todo-app">
-                <AppHeader toDo={todoCount} done={doneCount} />
-                <div className="top-panel d-flex">
-                    <SearchPanel onSetSearchString={this.onSetSearchString}/>
-                    <ItemStatusFilter
-                        onSetFilter={this.onSetFilter}
-                        onDisplayAll={this.displayAll}/>
-                </div>
+            <section className="todo-app">
+                <AppHeader onItemAdded={this.addItem}/>
+                <section className="main">
+                    <ToDoList
+                        todos={this.state.todoData}
+                        filteringProperty={this.state.filteringProperty}
+                        filteringTarget={this.state.filteringTarget}
+                        onDeleted={this.deleteItem}
+                        onToggleDone={this.onToggleDone}/>
+                </section>
         
-                <ToDoList
-                    todos={this.state.todoData}
-                    searchString={this.state.searchString}
-                    filteringProperty={this.state.filteringProperty}
-                    filteringTarget={this.state.filteringTarget}
-                    onDeleted={this.deleteItem}
-                    onToggleImportant={this.onToggleImportant}
-                    onToggleDone={this.onToggleDone}/>
-        
-                <ItemAddForm onItemAdded={this.addItem}/>
-                <ItemController deleteByFilter={this.deleteByFilter}/>
-            </div>
+                <ItemController
+                    toDo={todoCount}
+                    onSetFilter={this.onSetFilter}
+                    deleteByFilter={this.deleteByFilter}/>
+            </section>
         );
     }
 }

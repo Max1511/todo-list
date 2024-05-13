@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import './item-add-form.css';
 
@@ -24,19 +25,20 @@ export default class ItemAddForm extends Component {
 
     render() {
         return (
-            <form className="item-add-form d-flex"
+            <form className="item-add-form"
                 onSubmit={this.onSubmit}>
                 
                 <input type="text"
-                    className="form-control"
+                    className="new-todo"
                     onChange={this.onLabelChange}
                     placeholder="What needs to be done?"
+                    autoFocus
                     value={this.state.label} />
-                
-                <button className="btn btn-outline-secondary">
-                    Add Item
-                </button>
             </form>
         );
     }
 }
+
+ItemAddForm.PropTypes = {
+    onSubmit: PropTypes.func
+};

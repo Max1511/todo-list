@@ -1,34 +1,46 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import TodoListItem from '../todo-list-item';
 import './todo-list.css';
 
-const TodoList = ({ todos, searchString, filteringProperty, filteringTarget, onDeleted, onToggleImportant, onToggleDone }) => {
+const TodoList = ({ todos, filteringProperty, filteringTarget, onDeleted, onToggleDone }) => {
 
     const elements = todos.map((item) => {
         const { id, ...itemProps } = item;
 
-        if (typeof filteringProperty !== 'undefined' && itemProps[filteringProperty] !== filteringTarget ||
-            itemProps.label.toLowerCase().indexOf(searchString.toLowerCase()) === -1) {
+        if (typeof filteringProperty !== 'undefined' && itemProps[filteringProperty] !== filteringTarget) {
             return;
         }
 
         return (
-            <li key={id} className="list-group-item">
+            <li key={id}>
                 <TodoListItem
                     {...itemProps }
                     onDeleted = {() => onDeleted(id)}
-                    onToggleImportant = {() => onToggleImportant(id)}
                     onToggleDone = {() => onToggleDone(id)}/>
             </li>
         );
     });
 
     return (
-        <ul className="list-group todo-list">
+        <ul className="todo-list">
             { elements }
         </ul>
     );
+};
+
+TodoList.PropTypes = {
+    todos: PropTypes.array,
+    filteringProperty: PropTypes.string,
+    filteringTarget: PropTypes.bool,
+    onToggleDone: PropTypes.func
+};
+
+TodoList.defaultProps = {
+    todos: [],
+    filteringProperty: undefined,
+    filteringTarget: false
 };
 
 export default TodoList;

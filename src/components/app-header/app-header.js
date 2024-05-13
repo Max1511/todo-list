@@ -1,14 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import ItemAddForm from '../item-add-form';
 
 import './app-header.css';
 
-const AppHeader = ({toDo, done}) => {
+const AppHeader = ({onItemAdded}) => {
     return (
-        <div className="app-header d-flex">
+        <header className="header">
             <h1>Todo List</h1>
-            <h2>{toDo} more to do, {done} done</h2>
-        </div>
+            <ItemAddForm onItemAdded={onItemAdded}/>
+        </header>
     );
+};
+
+AppHeader.PropTypes = {
+    onItemAdded: PropTypes.func
 };
 
 export default AppHeader;

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {formatDistanceToNow} from 'date-fns';
 
 import './todo-list-item.css';
@@ -12,40 +13,47 @@ export default class TodoListItem extends Component {
     };
 
     render() {
-        const {label, date, onDeleted,
-            onToggleImportant, onToggleDone,
-            important, done} = this.props;
+        const {label, date, onDeleted, onToggleDone, done} = this.props;
 
-        let classNames = 'todo-list-item';
+        let classNames = 'view';
         if (done) {
-            classNames += ' done';
-        }
-        if (important) {
-            classNames += ' important';
+            classNames += ' completed';
         }
         
         return (
-            <span className={classNames}>
-                <span
-                    className="todo-list-item-label"
-                    onClick={onToggleDone}>
-                    {label}
-                </span>
+            <div className={classNames}>
+                <input
+                    className="toggle"
+                    type="checkbox"
+                    onClick={onToggleDone}/>
+                <label>
+                    <span className="description">{label}</span>
+                    <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
+                </label>
         
                 <button type="button"
-                    className="btn btn-outline-success btn-sm float-right"
-                    onClick={onToggleImportant}>
-                    <i className="fa fa-exclamation" />
+                    className="icon icon-edit">
                 </button>
         
                 <button type="button"
-                    className="btn btn-outline-danger btn-sm float-right"
+                    className="icon icon-destroy"
                     onClick={onDeleted}>
-                    <i className="fa fa-trash-o" />
                 </button>
-
-                <p className="date float-right">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</p>
-            </span>
+            </div>
         );
     }
 }
+
+TodoListItem.PropTypes = {
+    label: PropTypes.string,
+    date: PropTypes.date,
+    onDeleted: PropTypes.func,
+    onToggleDone: PropTypes.func,
+    done: PropTypes.bool
+};
+
+TodoListItem.defaultProps = {
+    label: '',
+    date: Date.now(),
+    done: false
+};

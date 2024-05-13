@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import './item-status-filter.css';
 
 export default class ItemStatusFilter extends Component {
 
-    buttonClass = 'btn btn-outline-secondary';
-    activatedButtonClass = 'btn btn-info';
+    buttonClass = 'not-selected';
+    activatedButtonClass = 'selected';
     state = {
         classNames: [
             this.activatedButtonClass,
@@ -45,11 +46,15 @@ export default class ItemStatusFilter extends Component {
         let id = 0;
 
         return (
-            <div className="btn-group">
-                {this.renderButton('All', this.state.classNames[id++], () => this.onClickButton(0, undefined, false))}
-                {this.renderButton('Active', this.state.classNames[id++], () => this.onClickButton(1, 'done', false))}
-                {this.renderButton('Done', this.state.classNames[id++], () => this.onClickButton(2, 'done', true))}
-            </div>
+            <ul className="filters">
+                <li>{this.renderButton('All', this.state.classNames[id++], () => this.onClickButton(0, undefined, false))}</li>
+                <li>{this.renderButton('Active', this.state.classNames[id++], () => this.onClickButton(1, 'done', false))}</li>
+                <li>{this.renderButton('Completed', this.state.classNames[id++], () => this.onClickButton(2, 'done', true))}</li>
+            </ul>
         );
     }
 }
+
+ItemStatusFilter.PropTypes = {
+    onSetFilter: PropTypes.func
+};
