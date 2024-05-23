@@ -9,14 +9,16 @@ const TodoList = ({ todos, filteringProperty, filteringTarget, onDeleted, onTogg
     const elements = todos.map((item) => {
         const { id, ...itemProps } = item;
 
+        let isHidden = false;
         if (typeof filteringProperty !== 'undefined' && itemProps[filteringProperty] !== filteringTarget) {
-            return;
+            isHidden = true;
         }
 
         return (
             <li key={id}>
                 <TodoListItem
                     {...itemProps }
+                    isHidden = {isHidden}
                     onDeleted = {() => onDeleted(id)}
                     onToggleDone = {() => onToggleDone(id)}/>
             </li>

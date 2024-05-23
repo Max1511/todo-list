@@ -119,7 +119,7 @@ label .title {
 }
 
 .icon-pause:after {
-	content: '';
+	content: '⏸︎';
 }
 
 .icon-play:after {

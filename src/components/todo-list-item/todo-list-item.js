@@ -6,6 +6,8 @@ import './todo-list-item.css';
 
 export default class TodoListItem extends Component {
 
+    isHidden = this.props.isHidden;
+
     state = {
         timerIsWorking: false,
         timer: 0
@@ -45,7 +47,9 @@ export default class TodoListItem extends Component {
     };
 
     render() {
-        const {label, date, onDeleted, onToggleDone, done} = this.props;
+        const {label, date, isHidden, onDeleted, onToggleDone, done} = this.props;
+
+        if (isHidden) return;
 
         let classNames = 'view';
         if (done) {
