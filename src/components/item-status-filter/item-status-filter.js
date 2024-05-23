@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 import './item-status-filter.css';
 
@@ -55,6 +55,6 @@ export default class ItemStatusFilter extends Component {
     }
 }
 
-ItemStatusFilter.PropTypes = {
-    onSetFilter: PropTypes.func
+ItemStatusFilter.propTypes = {
+    onSetFilter: propTypes.func
 };

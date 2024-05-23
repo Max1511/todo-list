@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 import TodoListItem from '../todo-list-item';
 import './todo-list.css';
@@ -30,11 +30,11 @@ const TodoList = ({ todos, filteringProperty, filteringTarget, onDeleted, onTogg
     );
 };
 
-TodoList.PropTypes = {
-    todos: PropTypes.array,
-    filteringProperty: PropTypes.string,
-    filteringTarget: PropTypes.bool,
-    onToggleDone: PropTypes.func
+TodoList.propTypes = {
+    todos: propTypes.array,
+    filteringProperty: propTypes.string,
+    filteringTarget: propTypes.bool,
+    onToggleDone: propTypes.func
 };
 
 TodoList.defaultProps = {

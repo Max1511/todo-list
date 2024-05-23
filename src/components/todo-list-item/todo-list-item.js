@@ -1,10 +1,42 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {formatDistanceToNow} from 'date-fns';
+import propTypes from 'prop-types';
+import {format, formatDistanceToNow} from 'date-fns';
 
 import './todo-list-item.css';
 
 export default class TodoListItem extends Component {
+
+    state = {
+        timerIsWorking: false,
+        timer: 0
+    };
+
+    componentWillUnmount = () => {
+        console.log('componentWillUnmount');
+        clearInterval(this.interval);
+    };
+
+    updateTimer = () => {
+        this.setState(({timer}) => {
+            return {
+                timer: timer + 1000
+            };
+        });
+    };
+
+    onToggleTimer = () => {
+        this.setState(({timerIsWorking}) => {
+            if (timerIsWorking) {
+                clearInterval(this.interval);
+            }
+            else {
+                this.interval = setInterval(this.updateTimer, 1000);
+            }
+            return {
+                timerIsWorking: !timerIsWorking
+            };
+        });
+    };
 
     addClass = (classNames, newClass, comparator) => {
         if (comparator) {
@@ -19,6 +51,14 @@ export default class TodoListItem extends Component {
         if (done) {
             classNames += ' completed';
         }
+
+        let timerIconClassNames = 'icon';
+        if (this.state.timerIsWorking) {
+            timerIconClassNames += ' icon-pause';
+        }
+        else {
+            timerIconClassNames += ' icon-play';
+        }
         
         return (
             <div className={classNames}>
@@ -27,10 +67,17 @@ export default class TodoListItem extends Component {
                     type="checkbox"
                     onClick={onToggleDone}/>
                 <label>
-                    <span className="description">{label}</span>
+                    <span className="title">{label}</span>
+                    <span className="description">
+                        <button type="button"
+                            className={timerIconClassNames}
+                            onClick={this.onToggleTimer}>
+                            {format(new Date(this.state.timer), 'mm:ss')}
+                        </button>
+                    </span>
                     <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
                 </label>
-        
+
                 <button type="button"
                     className="icon icon-edit">
                 </button>
@@ -44,12 +91,12 @@ export default class TodoListItem extends Component {
     }
 }
 
-TodoListItem.PropTypes = {
-    label: PropTypes.string,
-    date: PropTypes.date,
-    onDeleted: PropTypes.func,
-    onToggleDone: PropTypes.func,
-    done: PropTypes.bool
+TodoListItem.propTypes = {
+    label: propTypes.string,
+    date: propTypes.object,
+    onDeleted: propTypes.func,
+    onToggleDone: propTypes.func,
+    done: propTypes.bool
 };
 
 TodoListItem.defaultProps = {

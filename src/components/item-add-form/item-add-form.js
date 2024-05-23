@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 import './item-add-form.css';
 
@@ -39,6 +39,6 @@ export default class ItemAddForm extends Component {
     }
 }
 
-ItemAddForm.PropTypes = {
-    onSubmit: PropTypes.func
+ItemAddForm.propTypes = {
+    onSubmit: propTypes.func
 };

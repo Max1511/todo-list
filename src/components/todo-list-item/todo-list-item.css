@@ -59,7 +59,7 @@ label .created {
 	color: gray;
 }
 
-label .description {
+label .title {
 	word-break: break-all;
 	display: block;
 	line-height: 1.2;
@@ -68,7 +68,7 @@ label .description {
 	color: #4d4d4d;
 }
 
-.completed label .description {
+.completed label .title {
 	color: #cdcdcd;
 	text-decoration: line-through;
 }
@@ -105,6 +105,25 @@ label .description {
 
 .icon-edit:after {
 	content: '✎';
+}
+
+.icon-pause,
+.icon-play {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.icon-play {
+	font-size: 15px;
+}
+
+.icon-pause:after {
+	content: '';
+}
+
+.icon-play:after {
+	content: '▶';
 }
 
 .edit {

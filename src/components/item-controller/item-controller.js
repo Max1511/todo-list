@@ -1,37 +1,35 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import propTypes from 'prop-types';
 
 import ItemStatusFilter from '../item-status-filter';
 
 import './item-controller.css';
 
-export default class ItemController extends Component {
-    render() {
-        const {toDo, onSetFilter, deleteByFilter} = this.props;
-        
-        return (
-            <footer className="footer">
-                <span className="todo-count">{toDo} items left</span>
+const ItemController = ({toDo, onSetFilter, deleteByFilter}) => {
+    return (
+        <footer className="footer">
+            <span className="todo-count">{toDo} items left</span>
 
-                <ItemStatusFilter
-                    onSetFilter={onSetFilter}/>
+            <ItemStatusFilter
+                onSetFilter={onSetFilter}/>
 
-                <button type="button"
-                    className="clear-completed"
-                    onClick={() => deleteByFilter('done', true)}>
-                    Clear completed
-                </button>
-            </footer>
-        );
-    }
-}
+            <button type="button"
+                className="clear-completed"
+                onClick={() => deleteByFilter('done', true)}>
+                Clear completed
+            </button>
+        </footer>
+    );
+};
 
-ItemController.PropTypes = {
-    toDo: PropTypes.number,
-    onSetFilter: PropTypes.func,
-    deleteByFilter: PropTypes.func
+ItemController.propTypes = {
+    toDo: propTypes.number,
+    onSetFilter: propTypes.func,
+    deleteByFilter: propTypes.func
 };
 
 ItemController.defaultProps = {
     toDo: 0,
 };
+
+export default ItemController;

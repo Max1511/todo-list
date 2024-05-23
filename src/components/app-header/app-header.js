@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 import ItemAddForm from '../item-add-form';
 
@@ -14,8 +14,8 @@ const AppHeader = ({onItemAdded}) => {
     );
 };
 
-AppHeader.PropTypes = {
-    onItemAdded: PropTypes.func
+AppHeader.propTypes = {
+    onItemAdded: propTypes.func
 };
 
 export default AppHeader;
