@@ -5,25 +5,26 @@ import {format, formatDistanceToNow} from 'date-fns';
 import './todo-list-item.css';
 
 export default class TodoListItem extends Component {
-
-    isHidden = this.props.isHidden;
-
     state = {
+        label: this.props.label,
+        labelIsEditing: false,
         timerIsWorking: false,
-        timer: 0
+        timer: this.props.timer
     };
 
     componentWillUnmount = () => {
-        console.log('componentWillUnmount');
         clearInterval(this.interval);
     };
 
     updateTimer = () => {
         this.setState(({timer}) => {
             return {
-                timer: timer + 1000
+                timer: timer - 1000
             };
         });
+        if (this.state.timer === 0) {
+            clearInterval(this.interval);
+        }
     };
 
     onToggleTimer = () => {
@@ -40,16 +41,50 @@ export default class TodoListItem extends Component {
         });
     };
 
-    addClass = (classNames, newClass, comparator) => {
-        if (comparator) {
-            classNames += ` ${newClass}`;
+    onEdit = () => {
+        this.setState({
+            labelIsEditing: true
+        });
+    };
+
+    onSubmit = (event) => {
+        event.preventDefault();
+
+        const label = this.state.label;
+        if (label === '') return;
+        
+        this.props.onChangeLabel(label);
+        this.setState({
+            label: label,
+            labelIsEditing: false
+        });
+    };
+
+    onLabelChange = (event) => {
+        this.setState({
+            label: event.target.value,
+        });
+    };
+
+    renderEdit = () => {
+        const {label, labelIsEditing} = this.state;
+
+        if (labelIsEditing) {
+            return (
+                <form onSubmit={this.onSubmit}>
+                    <input type="text"
+                        onChange={this.onLabelChange}
+                        autoFocus
+                        value={label} />
+                </form>
+            );
+        } else {
+            return (<span className="title">{label}</span>);
         }
     };
 
     render() {
-        const {label, date, isHidden, onDeleted, onToggleDone, done} = this.props;
-
-        if (isHidden) return;
+        const {date, onDeleted, onToggleDone, done} = this.props;
 
         let classNames = 'view';
         if (done) {
@@ -65,32 +100,35 @@ export default class TodoListItem extends Component {
         }
         
         return (
-            <div className={classNames}>
-                <input
-                    className="toggle"
-                    type="checkbox"
-                    onClick={onToggleDone}/>
-                <label>
-                    <span className="title">{label}</span>
-                    <span className="description">
-                        <button type="button"
-                            className={timerIconClassNames}
-                            onClick={this.onToggleTimer}>
-                            {format(new Date(this.state.timer), 'mm:ss')}
-                        </button>
-                    </span>
-                    <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
-                </label>
+            <React.Fragment>
+                <div className={classNames}>
+                    <input
+                        className="toggle"
+                        type="checkbox"
+                        onClick={onToggleDone}/>
+                    <label>
+                        {this.renderEdit()}
+                        <span className="description">
+                            <button type="button"
+                                className={timerIconClassNames}
+                                onClick={this.onToggleTimer}>
+                                {format(new Date(this.state.timer), 'mm:ss')}
+                            </button>
+                        </span>
+                        <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
+                    </label>
 
-                <button type="button"
-                    className="icon icon-edit">
-                </button>
+                    <button type="button"
+                        className="icon icon-edit"
+                        onClick={this.onEdit}>
+                    </button>
         
-                <button type="button"
-                    className="icon icon-destroy"
-                    onClick={onDeleted}>
-                </button>
-            </div>
+                    <button type="button"
+                        className="icon icon-destroy"
+                        onClick={onDeleted}>
+                    </button>
+                </div>
+            </React.Fragment>
         );
     }
 }
@@ -98,13 +136,15 @@ export default class TodoListItem extends Component {
 TodoListItem.propTypes = {
     label: propTypes.string,
     date: propTypes.object,
+    timer: propTypes.object,
+    done: propTypes.bool,
     onDeleted: propTypes.func,
     onToggleDone: propTypes.func,
-    done: propTypes.bool
 };
 
 TodoListItem.defaultProps = {
     label: '',
     date: Date.now(),
+    timer: new Date(0),
     done: false
 };

@@ -10,33 +10,47 @@ export default class App extends Component {
 
     maxId = 1;
 
-    createTodoItem = (label) => {
+    createTodoItem = (label, min = 0, sec = 0) => {
         return {
             id: this.maxId++,
             label,
             date: new Date(),
+            timer: new Date(min * 60000 + sec * 1000),
             done: false,
         };
     };
 
     state = {
         todoData: [
-            this.createTodoItem('Drink Coffee'),
-            this.createTodoItem('Make React App'),
-            this.createTodoItem('Have a lunch'),
+            this.createTodoItem('Drink Coffee', 5),
+            this.createTodoItem('Make React App', 30, 30),
+            this.createTodoItem('Have a lunch', 30),
         ],
         filteringProperty: undefined,
         filteringTarget: false
     };
 
-    addItem = (text) => {
-        const newItem = this.createTodoItem(text);
+    addItem = (text, min, sec) => {
+        const newItem = this.createTodoItem(text, min, sec);
 
         this.setState(({todoData}) => {
             const newArray = [
                 ...todoData,
                 newItem,
             ];
+
+            return {
+                todoData: newArray,
+            };
+        });
+    };
+
+    changeItemLabel = (id, label) => {
+        this.setState(({todoData}) => {
+            const index = todoData.findIndex((element) => element.id === id);
+
+            const newArray = todoData;
+            newArray[index].label = label;
 
             return {
                 todoData: newArray,
@@ -105,6 +119,17 @@ export default class App extends Component {
         });
     };
 
+    getFilteringTodoData = () => {
+        const {todoData, filteringProperty, filteringTarget} = this.state;
+
+        return todoData.filter((item) => {
+            if (typeof filteringProperty === 'undefined' || item[filteringProperty] === filteringTarget) {
+                return true;
+            }
+            return false;
+        });
+    };
+
     render() {
         const {todoData} = this.state;
         const doneCount = todoData.filter((item) => item.done).length;
@@ -115,9 +140,8 @@ export default class App extends Component {
                 <AppHeader onItemAdded={this.addItem}/>
                 <section className="main">
                     <ToDoList
-                        todos={this.state.todoData}
-                        filteringProperty={this.state.filteringProperty}
-                        filteringTarget={this.state.filteringTarget}
+                        todos={this.getFilteringTodoData()}
+                        onChangeLabel={this.changeItemLabel}
                         onDeleted={this.deleteItem}
                         onToggleDone={this.onToggleDone}/>
                 </section>

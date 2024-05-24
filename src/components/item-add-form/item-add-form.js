@@ -7,6 +7,8 @@ export default class ItemAddForm extends Component {
 
     state = {
         label: '',
+        min: '',
+        sec: '',
     };
 
     onLabelChange = (event) => {
@@ -15,17 +17,36 @@ export default class ItemAddForm extends Component {
         });
     };
 
+    onMinChange = (event) => {
+        this.setState({
+            min: event.target.value,
+        });
+    };
+
+    onSecChange = (event) => {
+        this.setState({
+            sec: event.target.value,
+        });
+    };
+
     onSubmit = (event) => {
         event.preventDefault();
-        this.props.onItemAdded(this.state.label);
+
+        const {label, min, sec} = this.state;
+
+        if (label === '') return;
+        this.props.onItemAdded(label, Number(min), Number(sec));
+
         this.setState({
             label: '',
+            min: '',
+            sec: '',
         });
     };
 
     render() {
         return (
-            <form className="item-add-form"
+            <form className="new-todo-form"
                 onSubmit={this.onSubmit}>
                 
                 <input type="text"
@@ -34,6 +55,21 @@ export default class ItemAddForm extends Component {
                     placeholder="What needs to be done?"
                     autoFocus
                     value={this.state.label} />
+                <input type="number"
+                    className="new-todo-form__timer"
+                    placeholder="Min"
+                    onChange={this.onMinChange}
+                    max="60"
+                    inputMode="none"
+                    value={this.state.min} />
+                <input type="number"
+                    className="new-todo-form__timer"
+                    placeholder="Sec"
+                    onChange={this.onSecChange}
+                    max="59"
+                    inputMode="none"
+                    value={this.state.sec} />
+                <input type="submit" hidden />
             </form>
         );
     }

@@ -5,33 +5,25 @@ import './item-status-filter.css';
 
 export default class ItemStatusFilter extends Component {
 
-    buttonClass = 'not-selected';
-    activatedButtonClass = 'selected';
     state = {
-        classNames: [
-            this.activatedButtonClass,
-            this.buttonClass,
-            this.buttonClass
-        ],
+        activatedButtonId: 0
     };
   
     onClickButton = (id, filteringProperty, filteringTarget) => {
-        const newArray = [
-            this.buttonClass,
-            this.buttonClass,
-            this.buttonClass,
-        ];
-        newArray[id] = this.activatedButtonClass;
-
         this.setState(() => {
             return {
-                classNames: newArray,
+                activatedButtonId: id,
             };
         });
         return this.props.onSetFilter(filteringProperty, filteringTarget);
     };
 
-    renderButton = (text, className, onClick) => {
+    renderButton = (id, text, onClick) => {
+        let className = 'not-selected';
+        if (id === this.state.activatedButtonId) {
+            className = 'selected';
+        }
+
         return (
             <button
                 type="button"
@@ -43,13 +35,11 @@ export default class ItemStatusFilter extends Component {
     };
   
     render() {
-        let id = 0;
-
         return (
             <ul className="filters">
-                <li>{this.renderButton('All', this.state.classNames[id++], () => this.onClickButton(0, undefined, false))}</li>
-                <li>{this.renderButton('Active', this.state.classNames[id++], () => this.onClickButton(1, 'done', false))}</li>
-                <li>{this.renderButton('Completed', this.state.classNames[id++], () => this.onClickButton(2, 'done', true))}</li>
+                <li>{this.renderButton(0, 'All', () => this.onClickButton(0, undefined, false))}</li>
+                <li>{this.renderButton(1, 'Active', () => this.onClickButton(1, 'done', false))}</li>
+                <li>{this.renderButton(2, 'Completed', () => this.onClickButton(2, 'done', true))}</li>
             </ul>
         );
     }
