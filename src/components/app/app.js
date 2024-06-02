@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 
 import AppHeader from '../app-header';
 import ToDoList from '../todo-list';
@@ -6,83 +6,73 @@ import ItemController from '../item-controller';
 
 import './app.css';
 
-export default class App extends Component {
+const App = () => {
 
-    maxId = 1;
+    let maxId = 1;
 
-    createTodoItem = (label, min = 0, sec = 0) => {
+    const createTodoItem = (label, min = 0, sec = 0) => {
         return {
-            id: this.maxId++,
+            id: maxId++,
             label,
             date: new Date(),
-            timer: new Date(min * 60000 + sec * 1000),
+            time: new Date(min * 60000 + sec * 1000),
             done: false,
         };
     };
 
-    state = {
-        todoData: [
-            this.createTodoItem('Drink Coffee', 5),
-            this.createTodoItem('Make React App', 30, 30),
-            this.createTodoItem('Have a lunch', 30),
-        ],
-        filteringProperty: undefined,
-        filteringTarget: false
-    };
+    const [todoData, setTodoData] = useState([
+        createTodoItem('Drink Coffee', 5),
+        createTodoItem('Make React App', 30, 30),
+        createTodoItem('Have a lunch', 30),
+    ]);
+    const [filteringProperty, setFilteringProperty] = useState(undefined);
+    const [filteringTarget, setFilteringTarget] = useState(false);
 
-    addItem = (text, min, sec) => {
-        const newItem = this.createTodoItem(text, min, sec);
+    const addItem = (text, min, sec) => {
+        const newItem = createTodoItem(text, min, sec);
 
-        this.setState(({todoData}) => {
+        setTodoData((todoData) => {
             const newArray = [
                 ...todoData,
                 newItem,
             ];
 
-            return {
-                todoData: newArray,
-            };
+            return newArray;
         });
     };
 
-    changeItemLabel = (id, label) => {
-        this.setState(({todoData}) => {
+    const changeItemLabel = (id, label) => {
+        setTodoData((todoData) => {
             const index = todoData.findIndex((element) => element.id === id);
 
             const newArray = todoData;
             newArray[index].label = label;
 
-            return {
-                todoData: newArray,
-            };
+            return newArray;
         });
     };
 
-    deleteItem = (id) => {
-        this.setState(({todoData}) => {
+    const deleteItem = (id) => {
+        setTodoData((todoData) => {
             const index = todoData.findIndex((element) => element.id === id);
             const newArray = [
                 ...todoData.slice(0, index),
                 ...todoData.slice(index + 1),
             ];
 
-            return {
-                todoData: newArray,
-            };
+            return newArray;
         });
     };
 
-    deleteByFilter = (filteringProperty, filteringTarget) => {
-        this.setState(({todoData}) => {
+    const deleteByFilter = (filteringProperty, filteringTarget) => {
+        setTodoData((todoData) => {
             const newArray = todoData.filter((element) => element[filteringProperty] !== filteringTarget);
 
-            return {
-                todoData: newArray,
-            };
+            return newArray;
         });
     };
 
-    toggleProperty = (array, id, propertyName) => {
+    const toggleProperty = (array, id, propertyName) => {
         const index = array.findIndex((element) => element.id === id);
         const oldItem = array[index];
         const newItem = {...oldItem, [propertyName]: !oldItem[propertyName]};
@@ -94,34 +84,18 @@ export default class App extends Component {
         ];
     };
 
-    onToggleDone = (id) => {
-        this.setState(({todoData}) => {
-            return {
-                todoData: this.toggleProperty(todoData, id, 'done'),
-            };
+    const onToggleDone = (id) => {
+        setTodoData((todoData) => {
+            return toggleProperty(todoData, id, 'done');
         });
     };
 
-    onSetFilter = (filteringProperty, filteringTarget) => {
-        this.setState(() => {
-            return {
-                filteringProperty,
-                filteringTarget,
-            };
-        });
+    const onSetFilter = (filteringProperty, filteringTarget) => {
+        setFilteringProperty(filteringProperty);
+        setFilteringTarget(filteringTarget);
     };
 
-    onSetSearchString = (searchString) => {
-        this.setState(() => {
-            return {
-                searchString
-            };
-        });
-    };
-
-    getFilteringTodoData = () => {
-        const {todoData, filteringProperty, filteringTarget} = this.state;
-
+    const getFilteringTodoData = () => {
         return todoData.filter((item) => {
             if (typeof filteringProperty === 'undefined' || item[filteringProperty] === filteringTarget) {
                 return true;
@@ -130,27 +104,26 @@ export default class App extends Component {
         });
     };
 
-    render() {
-        const {todoData} = this.state;
-        const doneCount = todoData.filter((item) => item.done).length;
-        const todoCount = todoData.length - doneCount;
+    const doneCount = todoData.filter((item) => item.done).length;
+    const todoCount = todoData.length - doneCount;
 
-        return (
-            <section className="todo-app">
-                <AppHeader onItemAdded={this.addItem}/>
-                <section className="main">
-                    <ToDoList
-                        todos={this.getFilteringTodoData()}
-                        onChangeLabel={this.changeItemLabel}
-                        onDeleted={this.deleteItem}
-                        onToggleDone={this.onToggleDone}/>
-                </section>
-        
-                <ItemController
-                    toDo={todoCount}
-                    onSetFilter={this.onSetFilter}
-                    deleteByFilter={this.deleteByFilter}/>
+    return (
+        <section className="todo-app">
+            <AppHeader onItemAdded={addItem}/>
+            <section className="main">
+                <ToDoList
+                    todos={getFilteringTodoData()}
+                    onChangeLabel={changeItemLabel}
+                    onDeleted={deleteItem}
+                    onToggleDone={onToggleDone}/>
             </section>
-        );
-    }
-}
+    
+            <ItemController
+                toDo={todoCount}
+                onSetFilter={onSetFilter}
+                deleteByFilter={deleteByFilter}/>
+        </section>
+    );
+};
+
+export default App;

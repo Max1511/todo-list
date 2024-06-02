@@ -1,26 +1,20 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import propTypes from 'prop-types';
 
 import './item-status-filter.css';
 
-export default class ItemStatusFilter extends Component {
+const ItemStatusFilter = ({onSetFilter}) => {
 
-    state = {
-        activatedButtonId: 0
-    };
+    const [activatedButtonId, setActivatedButtonId] = useState(0);
   
-    onClickButton = (id, filteringProperty, filteringTarget) => {
-        this.setState(() => {
-            return {
-                activatedButtonId: id,
-            };
-        });
-        return this.props.onSetFilter(filteringProperty, filteringTarget);
+    const onClickButton = (id, filteringProperty, filteringTarget) => {
+        setActivatedButtonId(id);
+        return onSetFilter(filteringProperty, filteringTarget);
     };
 
-    renderButton = (id, text, onClick) => {
+    const renderButton = (id, text, onClick) => {
         let className = 'not-selected';
-        if (id === this.state.activatedButtonId) {
+        if (id === activatedButtonId) {
             className = 'selected';
         }
 
@@ -34,17 +28,17 @@ export default class ItemStatusFilter extends Component {
         );
     };
   
-    render() {
-        return (
-            <ul className="filters">
-                <li>{this.renderButton(0, 'All', () => this.onClickButton(0, undefined, false))}</li>
-                <li>{this.renderButton(1, 'Active', () => this.onClickButton(1, 'done', false))}</li>
-                <li>{this.renderButton(2, 'Completed', () => this.onClickButton(2, 'done', true))}</li>
-            </ul>
-        );
-    }
-}
+    return (
+        <ul className="filters">
+            <li>{renderButton(0, 'All', () => onClickButton(0, undefined, false))}</li>
+            <li>{renderButton(1, 'Active', () => onClickButton(1, 'done', false))}</li>
+            <li>{renderButton(2, 'Completed', () => onClickButton(2, 'done', true))}</li>
+        </ul>
+    );
+};
 
 ItemStatusFilter.propTypes = {
     onSetFilter: propTypes.func
 };
+
+export default ItemStatusFilter;

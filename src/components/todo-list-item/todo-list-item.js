@@ -1,142 +1,133 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import propTypes from 'prop-types';
 import {format, formatDistanceToNow} from 'date-fns';
 
 import './todo-list-item.css';
 
-export default class TodoListItem extends Component {
-    state = {
-        label: this.props.label,
-        labelIsEditing: false,
-        timerIsWorking: false,
-        timer: this.props.timer
-    };
+const TodoListItem = ({label, date, time, onDeleted, onToggleDone, done}) => {
+    const [currentLabel, setLabel] = useState(label);
+    const [currentTime, setTime] = useState(time);
+    const [, setTimer] = useState(undefined);
+    const [labelIsEditing, setLabelIsEditing] = useState(false);
+    const [timerIsWorking, setTimerIsWorking] = useState(false);
 
-    componentWillUnmount = () => {
-        clearInterval(this.interval);
-    };
+    const second = 1000;
 
-    updateTimer = () => {
-        this.setState(({timer}) => {
-            return {
-                timer: timer - 1000
-            };
+    useEffect(() => {
+        if (timerIsWorking) {
+            setTimer(setInterval(updateTimer, second));
+            return;
+        }
+        stopTimer();
+        return () => stopTimer();
+    }, [timerIsWorking]);
+
+    const stopTimer = () => {
+        setTimer((timer) => {
+            clearInterval(timer);
+            return timer;
         });
-        if (this.state.timer === 0) {
-            clearInterval(this.interval);
+    };
+
+    const updateTimer = () => {
+        setTime((currentTime) => {
+            return currentTime - second;
+        });
+        if (currentTime === 0) {
+            stopTimer();
         }
     };
 
-    onToggleTimer = () => {
-        this.setState(({timerIsWorking}) => {
-            if (timerIsWorking) {
-                clearInterval(this.interval);
-            }
-            else {
-                this.interval = setInterval(this.updateTimer, 1000);
-            }
-            return {
-                timerIsWorking: !timerIsWorking
-            };
-        });
+    const onToggleTimer = () => {
+        setTimerIsWorking((timerIsWorking) => !timerIsWorking);
     };
 
-    onEdit = () => {
-        this.setState({
-            labelIsEditing: true
-        });
+    const onEdit = () => {
+        setLabelIsEditing(true);
     };
 
-    onSubmit = (event) => {
+    const onSubmit = (event) => {
         event.preventDefault();
 
-        const label = this.state.label;
-        if (label === '') return;
+        if (currentLabel === '') return;
         
-        this.props.onChangeLabel(label);
-        this.setState({
-            label: label,
-            labelIsEditing: false
-        });
+        setLabelIsEditing(false);
     };
 
-    onLabelChange = (event) => {
-        this.setState({
-            label: event.target.value,
-        });
+    const onLabelChange = (event) => {
+        setLabel(event.target.value);
     };
 
-    renderEdit = () => {
-        const {label, labelIsEditing} = this.state;
+    const onDeleteWithTimer = () => {
+        stopTimer();
+        onDeleted();
+    };
 
+    const renderEdit = () => {
         if (labelIsEditing) {
             return (
-                <form onSubmit={this.onSubmit}>
+                <form onSubmit={onSubmit}>
                     <input type="text"
-                        onChange={this.onLabelChange}
+                        onChange={onLabelChange}
                         autoFocus
-                        value={label} />
+                        value={currentLabel} />
                 </form>
             );
         } else {
-            return (<span className="title">{label}</span>);
+            return (<span className="title">{currentLabel}</span>);
         }
     };
 
-    render() {
-        const {date, onDeleted, onToggleDone, done} = this.props;
-
-        let classNames = 'view';
-        if (done) {
-            classNames += ' completed';
-        }
-
-        let timerIconClassNames = 'icon';
-        if (this.state.timerIsWorking) {
-            timerIconClassNames += ' icon-pause';
-        }
-        else {
-            timerIconClassNames += ' icon-play';
-        }
-        
-        return (
-            <React.Fragment>
-                <div className={classNames}>
-                    <input
-                        className="toggle"
-                        type="checkbox"
-                        onClick={onToggleDone}/>
-                    <label>
-                        {this.renderEdit()}
-                        <span className="description">
-                            <button type="button"
-                                className={timerIconClassNames}
-                                onClick={this.onToggleTimer}>
-                                {format(new Date(this.state.timer), 'mm:ss')}
-                            </button>
-                        </span>
-                        <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
-                    </label>
-
-                    <button type="button"
-                        className="icon icon-edit"
-                        onClick={this.onEdit}>
-                    </button>
-        
-                    <button type="button"
-                        className="icon icon-destroy"
-                        onClick={onDeleted}>
-                    </button>
-                </div>
-            </React.Fragment>
-        );
+    let classNames = 'view';
+    if (done) {
+        classNames += ' completed';
     }
-}
+
+    let timerIconClassNames = 'icon';
+    if (timerIsWorking) {
+        timerIconClassNames += ' icon-pause';
+    }
+    else {
+        timerIconClassNames += ' icon-play';
+    }
+
+    return (
+        <React.Fragment>
+            <div className={classNames}>
+                <input
+                    className="toggle"
+                    type="checkbox"
+                    onClick={onToggleDone}/>
+                <label>
+                    {renderEdit()}
+                    <span className="description">
+                        <button type="button"
+                            className={timerIconClassNames}
+                            onClick={onToggleTimer}>
+                            {format(new Date(currentTime), 'mm:ss')}
+                        </button>
+                    </span>
+                    <span className="created">{formatDistanceToNow(date, { includeSeconds: true, addSuffix: true })}</span>
+                </label>
+
+                <button type="button"
+                    className="icon icon-edit"
+                    onClick={onEdit}>
+                </button>
+    
+                <button type="button"
+                    className="icon icon-destroy"
+                    onClick={onDeleteWithTimer}>
+                </button>
+            </div>
+        </React.Fragment>
+    );
+};
 
 TodoListItem.propTypes = {
     label: propTypes.string,
     date: propTypes.object,
-    timer: propTypes.object,
+    time: propTypes.object,
     done: propTypes.bool,
     onDeleted: propTypes.func,
     onToggleDone: propTypes.func,
@@ -145,6 +136,8 @@ TodoListItem.propTypes = {
 TodoListItem.defaultProps = {
     label: '',
     date: Date.now(),
-    timer: new Date(0),
+    time: new Date(0),
     done: false
 };
+
+export default TodoListItem;
