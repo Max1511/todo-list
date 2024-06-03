@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 
 import AppHeader from '../app-header';
 import ToDoList from '../todo-list';
@@ -8,11 +8,12 @@ import './app.css';
 
 const App = () => {
 
-    let maxId = 1;
+    const maxIdRef = useRef(0);
 
     const createTodoItem = (label, min = 0, sec = 0) => {
+        maxIdRef.current++;
         return {
-            id: maxId++,
+            id: maxIdRef.current,
             label,
             date: new Date(),
             time: new Date(min * 60000 + sec * 1000),
